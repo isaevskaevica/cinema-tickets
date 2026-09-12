@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(${movieId == null} ? 'Add movie' : 'Edit movie', ~{::section})}">
+<body>
+<section>
+    <div class="page-header">
+        <div>
+            <h1 th:text="${movieId == null} ? 'Add movie' : 'Edit movie'">Add movie</h1>
+            <p class="subtitle">Duration is used to compute when each screening ends.</p>
+        </div>
+    </div>
+
+    <form class="card form" th:object="${form}" method="post"
+          th:action="${movieId == null} ? @{/movies} : @{/movies/{id}(id=${movieId})}">
+
+        <div class="field" th:classappend="${#fields.hasErrors('title')} ? 'has-error'">
+            <label for="title">Title</label>
+            <input id="title" type="text" th:field="*{title}" placeholder="e.g. Inception">
+            <div class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+        </div>
+
+        <div class="row">
+            <div class="field" th:classappend="${#fields.hasErrors('genre')} ? 'has-error'">
+                <label for="genre">Genre</label>
+                <select id="genre" th:field="*{genre}">
+                    <option value="">Select a genre</option>
+                    <option th:each="g : ${genres}" th:value="${g}" th:text="${g.displayName}">Drama</option>
+                </select>
+                <div class="error" th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}"></div>
+            </div>
+            <div class="field" th:classappend="${#fields.hasErrors('ageRating')} ? 'has-error'">
+                <label for="ageRating">Age rating</label>
+                <select id="ageRating" th:field="*{ageRating}">
+                    <option value="">Select a rating</option>
+                    <option th:each="r : ${ratings}" th:value="${r}"
+                            th:text="|${r.label} — ${r.description}|">PG-13</option>
+                </select>
+                <div class="error" th:if="${#fields.hasErrors('ageRating')}" th:errors="*{ageRating}"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="field" th:classappend="${#fields.hasErrors('durationMinutes')} ? 'has-error'">
+                <label for="durationMinutes">Duration (minutes)</label>
+                <input id="durationMinutes" type="number" min="1" max="600" th:field="*{durationMinutes}">
+                <div class="error" th:if="${#fields.hasErrors('durationMinutes')}" th:errors="*{durationMinutes}"></div>
+            </div>
+            <div class="field" th:classappend="${#fields.hasErrors('releaseYear')} ? 'has-error'">
+                <label for="releaseYear">Release year</label>
+                <input id="releaseYear" type="number" min="1888" max="2100" th:field="*{releaseYear}">
+                <div class="error" th:if="${#fields.hasErrors('releaseYear')}" th:errors="*{releaseYear}"></div>
+            </div>
+        </div>
+
+        <div class="field" th:classappend="${#fields.hasErrors('director')} ? 'has-error'">
+            <label for="director">Director</label>
+            <input id="director" type="text" th:field="*{director}">
+            <div class="error" th:if="${#fields.hasErrors('director')}" th:errors="*{director}"></div>
+        </div>
+
+        <div class="field" th:classappend="${#fields.hasErrors('description')} ? 'has-error'">
+            <label for="description">Description</label>
+            <textarea id="description" th:field="*{description}" placeholder="One or two sentences about the film"></textarea>
+            <div class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn" type="submit" th:text="${movieId == null} ? 'Add movie' : 'Save changes'">Save</button>
+            <a class="btn btn-secondary" th:href="@{/movies}">Cancel</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>

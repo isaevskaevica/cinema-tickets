@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' · Cinema Tickets'">Cinema Tickets</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header class="topbar">
+    <div class="topbar-inner">
+        <a class="brand" th:href="@{/}">Cinema Tickets</a>
+        <nav class="nav">
+            <a th:href="@{/movies}" th:classappend="${#strings.startsWith(currentPath, '/movies')} ? 'active'">Movies</a>
+            <a th:href="@{/screenings}" th:classappend="${#strings.startsWith(currentPath, '/screenings')} ? 'active'">Screenings</a>
+            <a th:href="@{/tickets}" th:classappend="${#strings.startsWith(currentPath, '/tickets')} ? 'active'">Tickets</a>
+            <a th:href="@{/halls}" th:classappend="${#strings.startsWith(currentPath, '/halls')} ? 'active'">Halls</a>
+        </nav>
+    </div>
+</header>
+<main class="container">
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+    <th:block th:replace="${content}"></th:block>
+</main>
+</body>
+</html>

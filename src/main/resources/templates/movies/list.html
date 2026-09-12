@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout('Movies', ~{::section})}">
+<body>
+<section>
+    <div class="page-header">
+        <div>
+            <h1>Movies</h1>
+            <p class="subtitle" th:text="|${#lists.size(movies)} movies in the catalogue|">10 movies</p>
+        </div>
+        <a class="btn" th:href="@{/movies/new}">Add movie</a>
+    </div>
+
+    <form class="filters" method="get" th:action="@{/movies}">
+        <div class="field">
+            <label for="genre">Genre</label>
+            <select id="genre" name="genre">
+                <option value="">All genres</option>
+                <option th:each="g : ${genres}" th:value="${g}" th:text="${g.displayName}"
+                        th:selected="${g == selectedGenre}">Drama</option>
+            </select>
+        </div>
+        <button class="btn btn-secondary" type="submit">Filter</button>
+        <a class="btn btn-secondary" th:href="@{/movies}" th:if="${selectedGenre != null}">Clear</a>
+    </form>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Rating</th>
+                <th>Duration</th>
+                <th>Year</th>
+                <th>Director</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${movies}">
+                <td>
+                    <strong th:text="${m.title}">Title</strong>
+                    <div class="small muted" th:text="${m.description}">Description</div>
+                </td>
+                <td th:text="${m.genre.displayName}">Drama</td>
+                <td>
+                    <span class="badge badge-neutral" th:text="${m.ageRating.label}"
+                          th:title="${m.ageRating.description}">PG-13</span>
+                </td>
+                <td th:text="${m.durationLabel}">2h 28m</td>
+                <td th:text="${m.releaseYear}">2010</td>
+                <td th:text="${m.director}">Director</td>
+                <td class="actions">
+                    <a class="btn btn-sm btn-secondary" th:href="@{/screenings/new(movieId=${m.id})}">Schedule</a>
+                    <a class="btn btn-sm btn-secondary" th:href="@{/movies/{id}/edit(id=${m.id})}">Edit</a>
+                    <form th:action="@{/movies/{id}/delete(id=${m.id})}" method="post"
+                          th:data-title="${m.title}"
+                          onsubmit="return confirm('Delete ' + this.dataset.title + ' and all of its screenings?')">
+                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(movies)}">
+                <td colspan="7" class="empty">No movies match this filter.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

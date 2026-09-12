@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout('Tickets', ~{::section})}">
+<body>
+<section>
+    <div class="page-header">
+        <div>
+            <h1>Tickets</h1>
+            <p class="subtitle">Cancelling a booking releases its seats back to the screening.</p>
+        </div>
+        <a class="btn" th:href="@{/tickets/new}">Book tickets</a>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Screening</th>
+                <th>Customer</th>
+                <th>Seats</th>
+                <th>Total</th>
+                <th>Booked</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${tickets}">
+                <td>
+                    <strong th:text="${t.screening.movie.title}">Movie</strong>
+                    <div class="small muted"
+                         th:text="|${#temporals.format(t.screening.startsAt, 'EEE d MMM, HH:mm')} · ${t.screening.hall.name}|">when</div>
+                </td>
+                <td>
+                    <span th:text="${t.customerName}">Name</span>
+                    <div class="small muted" th:text="${t.customerEmail}">email</div>
+                </td>
+                <td th:text="${t.seats}">2</td>
+                <td th:text="|${t.totalPrice} MKD|">500 MKD</td>
+                <td class="small" th:text="${#temporals.format(t.bookedAt, 'dd MMM yyyy, HH:mm')}">date</td>
+                <td class="actions">
+                    <form th:action="@{/tickets/{id}/cancel(id=${t.id})}" method="post"
+                          onsubmit="return confirm('Cancel this booking?')">
+                        <button class="btn btn-sm btn-danger" type="submit">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(tickets)}">
+                <td colspan="6" class="empty">No tickets booked yet.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

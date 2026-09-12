@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout('Dashboard', ~{::section})}">
+<body>
+<section>
+    <div class="page-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p class="subtitle">What's playing, how many seats are left and who has booked.</p>
+        </div>
+        <a class="btn" th:href="@{/tickets/new}">Book tickets</a>
+    </div>
+
+    <div class="stats">
+        <div class="card stat">
+            <div class="label">Movies</div>
+            <div class="value" th:text="${movieCount}">0</div>
+        </div>
+        <div class="card stat">
+            <div class="label">Upcoming screenings</div>
+            <div class="value" th:text="${upcomingCount}">0</div>
+        </div>
+        <div class="card stat">
+            <div class="label">Bookings</div>
+            <div class="value" th:text="${ticketCount}">0</div>
+        </div>
+        <div class="card stat">
+            <div class="label">Seats sold</div>
+            <div class="value" th:text="${seatsSold}">0</div>
+        </div>
+    </div>
+
+    <h2>Upcoming screenings</h2>
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>When</th>
+                <th>Movie</th>
+                <th>Hall</th>
+                <th>Price</th>
+                <th>Seats</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${upcoming}">
+                <td>
+                    <strong th:text="${#temporals.format(s.startsAt, 'EEE d MMM, HH:mm')}">date</strong>
+                    <div class="small muted" th:text="|ends ${#temporals.format(s.endsAt, 'HH:mm')}|">ends</div>
+                </td>
+                <td>
+                    <strong th:text="${s.movie.title}">Movie</strong>
+                    <div class="small muted" th:text="|${s.movie.genre.displayName} · ${s.movie.durationLabel}|">genre</div>
+                </td>
+                <td>
+                    <span th:text="${s.hall.name}">Hall</span>
+                    <div class="small muted" th:text="${s.hall.screenType.displayName}">Standard</div>
+                </td>
+                <td th:text="|${s.price} MKD|">250 MKD</td>
+                <td>
+                    <span class="badge" th:classappend="|badge-${#strings.toLowerCase(s.availability.name())}|"
+                          th:text="${s.availability.displayName}">Available</span>
+                    <div class="small muted" th:text="|${s.seatsLeft} of ${s.hall.capacity} left|">left</div>
+                </td>
+                <td class="actions">
+                    <a class="btn btn-sm btn-secondary" th:if="${s.seatsLeft > 0}"
+                       th:href="@{/tickets/new(screeningId=${s.id})}">Book</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(upcoming)}">
+                <td colspan="6" class="empty">No upcoming screenings scheduled.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>Recent bookings</h2>
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Screening</th>
+                <th>Customer</th>
+                <th>Seats</th>
+                <th>Total</th>
+                <th>Booked</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${recentTickets}">
+                <td>
+                    <strong th:text="${t.screening.movie.title}">Movie</strong>
+                    <div class="small muted"
+                         th:text="|${#temporals.format(t.screening.startsAt, 'EEE d MMM, HH:mm')} · ${t.screening.hall.name}|">when</div>
+                </td>
+                <td>
+                    <span th:text="${t.customerName}">Name</span>
+                    <div class="small muted" th:text="${t.customerEmail}">email</div>
+                </td>
+                <td th:text="${t.seats}">2</td>
+                <td th:text="|${t.totalPrice} MKD|">500 MKD</td>
+                <td class="small" th:text="${#temporals.format(t.bookedAt, 'dd MMM yyyy, HH:mm')}">date</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(recentTickets)}">
+                <td colspan="5" class="empty">No bookings yet.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

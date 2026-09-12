@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout('Book tickets', ~{::section})}">
+<body>
+<section>
+    <div class="page-header">
+        <div>
+            <h1>Book tickets</h1>
+            <p class="subtitle">Only upcoming screenings with free seats can be booked.</p>
+        </div>
+    </div>
+
+    <form class="card form" th:object="${form}" method="post" th:action="@{/tickets}">
+
+        <div class="field" th:classappend="${#fields.hasErrors('screeningId')} ? 'has-error'">
+            <label for="screeningId">Screening</label>
+            <select id="screeningId" th:field="*{screeningId}">
+                <option value="">Select a screening</option>
+                <option th:each="s : ${screenings}" th:value="${s.id}"
+                        th:text="|${s.movie.title} — ${#temporals.format(s.startsAt, 'EEE d MMM, HH:mm')} · ${s.hall.name} · ${s.seatsLeft} seats left · ${s.price} MKD|">Screening</option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('screeningId')}" th:errors="*{screeningId}"></div>
+        </div>
+
+        <div class="row">
+            <div class="field" th:classappend="${#fields.hasErrors('customerName')} ? 'has-error'">
+                <label for="customerName">Name</label>
+                <input id="customerName" type="text" th:field="*{customerName}" placeholder="e.g. Ana Petrovska">
+                <div class="error" th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}"></div>
+            </div>
+            <div class="field" th:classappend="${#fields.hasErrors('customerEmail')} ? 'has-error'">
+                <label for="customerEmail">Email</label>
+                <input id="customerEmail" type="email" th:field="*{customerEmail}" placeholder="ana@example.com">
+                <div class="error" th:if="${#fields.hasErrors('customerEmail')}" th:errors="*{customerEmail}"></div>
+            </div>
+        </div>
+
+        <div class="field" th:classappend="${#fields.hasErrors('seats')} ? 'has-error'">
+            <label for="seats">Seats</label>
+            <input id="seats" type="number" min="1" max="20" th:field="*{seats}">
+            <div class="error" th:if="${#fields.hasErrors('seats')}" th:errors="*{seats}"></div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn" type="submit">Book</button>
+            <a class="btn btn-secondary" th:href="@{/tickets}">Cancel</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>

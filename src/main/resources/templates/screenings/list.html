@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout('Screenings', ~{::section})}">
+<body>
+<section>
+    <div class="page-header">
+        <div>
+            <h1>Screenings</h1>
+            <p class="subtitle" th:text="|${screeningCount} screenings on the schedule|">12 screenings</p>
+        </div>
+        <a class="btn" th:href="@{/screenings/new}">Schedule screening</a>
+    </div>
+
+    <form class="filters" method="get" th:action="@{/screenings}">
+        <div class="field">
+            <label for="movieId">Movie</label>
+            <select id="movieId" name="movieId">
+                <option value="">All movies</option>
+                <option th:each="m : ${movies}" th:value="${m.id}" th:text="${m.title}"
+                        th:selected="${m.id == selectedMovieId}">Movie</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="hallId">Hall</label>
+            <select id="hallId" name="hallId">
+                <option value="">All halls</option>
+                <option th:each="h : ${halls}" th:value="${h.id}" th:text="${h.name}"
+                        th:selected="${h.id == selectedHallId}">Hall</option>
+            </select>
+        </div>
+        <label class="checkbox">
+            <input type="checkbox" name="includePast" value="true" th:checked="${includePast}">
+            Include finished
+        </label>
+        <button class="btn btn-secondary" type="submit">Filter</button>
+        <a class="btn btn-secondary" th:href="@{/screenings}"
+           th:if="${selectedMovieId != null or selectedHallId != null or includePast}">Clear</a>
+    </form>
+
+    <div class="card empty" th:if="${schedule.isEmpty()}">No screenings match these filters.</div>
+
+    <th:block th:each="day : ${schedule}">
+        <h2>
+            <span class="badge badge-today" th:if="${day.key == today}">Today</span>
+            <span th:text="${#temporals.format(day.key, 'EEEE, d MMMM yyyy')}">Saturday, 13 September 2026</span>
+        </h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Movie</th>
+                    <th>Hall</th>
+                    <th>Price</th>
+                    <th>Seats</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${day.value}">
+                    <td>
+                        <strong th:text="${#temporals.format(s.startsAt, 'HH:mm')}">19:30</strong>
+                        <div class="small muted" th:text="|ends ${#temporals.format(s.endsAt, 'HH:mm')}|">ends 21:58</div>
+                    </td>
+                    <td>
+                        <strong th:text="${s.movie.title}">Movie</strong>
+                        <div class="small muted"
+                             th:text="|${s.movie.genre.displayName} · ${s.movie.durationLabel} · ${s.movie.ageRating.label}|">meta</div>
+                    </td>
+                    <td>
+                        <span th:text="${s.hall.name}">Hall</span>
+                        <div class="small muted" th:text="${s.hall.screenType.displayName}">Standard</div>
+                    </td>
+                    <td th:text="|${s.price} MKD|">250 MKD</td>
+                    <td>
+                        <span class="badge" th:classappend="|badge-${#strings.toLowerCase(s.availability.name())}|"
+                              th:text="${s.availability.displayName}">Available</span>
+                        <div class="small muted" th:text="|${s.seatsSold} / ${s.hall.capacity} sold|">sold</div>
+                    </td>
+                    <td class="actions">
+                        <a class="btn btn-sm btn-secondary" th:if="${!s.past and s.seatsLeft > 0}"
+                           th:href="@{/tickets/new(screeningId=${s.id})}">Book</a>
+                        <a class="btn btn-sm btn-secondary" th:if="${!s.past}"
+                           th:href="@{/screenings/{id}/edit(id=${s.id})}">Edit</a>
+                        <form th:action="@{/screenings/{id}/delete(id=${s.id})}" method="post"
+                              onsubmit="return confirm('Delete this screening and its bookings?')">
+                            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </th:block>
+</section>
+</body>
+</html>

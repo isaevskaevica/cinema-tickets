@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout('Halls', ~{::section})}">
+<body>
+<section>
+    <div class="page-header">
+        <div>
+            <h1>Halls</h1>
+            <p class="subtitle">Screening rooms, their capacity and how many screenings each one has coming up.</p>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Screen</th>
+                <th>Capacity</th>
+                <th>Upcoming screenings</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="h : ${halls}">
+                <td><strong th:text="${h.name}">Hall</strong></td>
+                <td th:text="${h.screenType.displayName}">Standard</td>
+                <td th:text="|${h.capacity} seats|">120 seats</td>
+                <td th:text="${upcomingCounts[h.id]}">0</td>
+                <td class="actions">
+                    <a class="btn btn-sm btn-secondary" th:href="@{/screenings(hallId=${h.id})}">View schedule</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(halls)}">
+                <td colspan="5" class="empty">No halls registered.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

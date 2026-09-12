@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(${screeningId == null} ? 'Schedule screening' : 'Edit screening', ~{::section})}">
+<body>
+<section>
+    <div class="page-header">
+        <div>
+            <h1 th:text="${screeningId == null} ? 'Schedule screening' : 'Edit screening'">Schedule screening</h1>
+            <p class="subtitle">A screening can only be moved to a hall that still fits the seats already sold.</p>
+        </div>
+    </div>
+
+    <form class="card form" th:object="${form}" method="post"
+          th:action="${screeningId == null} ? @{/screenings} : @{/screenings/{id}(id=${screeningId})}">
+
+        <div class="field" th:classappend="${#fields.hasErrors('movieId')} ? 'has-error'">
+            <label for="movieId">Movie</label>
+            <select id="movieId" th:field="*{movieId}">
+                <option value="">Select a movie</option>
+                <option th:each="m : ${movies}" th:value="${m.id}"
+                        th:text="|${m.title} (${m.releaseYear}, ${m.durationLabel})|">Movie</option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('movieId')}" th:errors="*{movieId}"></div>
+        </div>
+
+        <div class="field" th:classappend="${#fields.hasErrors('hallId')} ? 'has-error'">
+            <label for="hallId">Hall</label>
+            <select id="hallId" th:field="*{hallId}">
+                <option value="">Select a hall</option>
+                <option th:each="h : ${halls}" th:value="${h.id}"
+                        th:text="|${h.name} — ${h.screenType.displayName}, ${h.capacity} seats|">Hall</option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('hallId')}" th:errors="*{hallId}"></div>
+        </div>
+
+        <div class="row">
+            <div class="field" th:classappend="${#fields.hasErrors('startsAt')} ? 'has-error'">
+                <label for="startsAt">Starts at</label>
+                <input id="startsAt" type="datetime-local" th:field="*{startsAt}">
+                <div class="error" th:if="${#fields.hasErrors('startsAt')}" th:errors="*{startsAt}"></div>
+            </div>
+            <div class="field" th:classappend="${#fields.hasErrors('price')} ? 'has-error'">
+                <label for="price">Ticket price (MKD)</label>
+                <input id="price" type="number" min="0" step="10" th:field="*{price}">
+                <div class="error" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn" type="submit"
+                    th:text="${screeningId == null} ? 'Schedule' : 'Save changes'">Schedule</button>
+            <a class="btn btn-secondary" th:href="@{/screenings}">Cancel</a>
+        </div>
+    </form>
+</section>
+</body>
+</html>
