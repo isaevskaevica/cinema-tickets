@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cinema-tickets-config
+  namespace: cinema-tickets
+data:
+  DB_HOST: "db"
+  DB_PORT: "5432"
+  DB_NAME: "cinema"

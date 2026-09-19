@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cinema-tickets
+  labels:
+    app.kubernetes.io/name: cinema-tickets
+    app.kubernetes.io/part-of: cinema-tickets
