@@ -18,3 +18,4 @@ target/
 .env
 
 k8s/app-secret.yaml
+k8s/db-secret.yaml
