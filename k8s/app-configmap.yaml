@@ -3,6 +3,10 @@ kind: ConfigMap
 metadata:
   name: cinema-tickets-config
   namespace: cinema-tickets
+  labels:
+    app.kubernetes.io/name: cinema-tickets
+    app.kubernetes.io/part-of: cinema-tickets
+    app.kubernetes.io/component: backend
 data:
   DB_HOST: "db"
   DB_PORT: "5432"

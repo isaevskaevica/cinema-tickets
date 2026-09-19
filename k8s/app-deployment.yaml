@@ -6,6 +6,7 @@ metadata:
   labels:
     app.kubernetes.io/name: cinema-tickets
     app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: cinema-tickets
 spec:
   replicas: 1
 
@@ -50,24 +51,25 @@ spec:
             httpGet:
               path: /actuator/health
               port: http
-            periodSeconds: 5
-            failureThreshold: 30
+            periodSeconds: 6
+            failureThreshold: 25
 
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: http
-            periodSeconds: 5
+            periodSeconds: 8
 
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: http
-            periodSeconds: 10
+            periodSeconds: 15
 
           resources:
             requests:
-              cpu: 250m
-              memory: 384Mi
+              cpu: 200m
+              memory: 320Mi
             limits:
-              memory: 1Gi
+              memory: 896Mi
+
