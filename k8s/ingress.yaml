@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cinema-tickets-ingress
+  namespace: cinema-tickets
+  labels:
+    app.kubernetes.io/name: cinema-tickets
+    app.kubernetes.io/part-of: cinema-tickets
+    app.kubernetes.io/component: ingress
+spec:
+  ingressClassName: traefik
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: cinema-tickets-app
+                port:
+                  number: 8080
